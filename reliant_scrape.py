@@ -75,5 +75,33 @@ def logon(headless, download_path, url, creds):
     
     logon = browser.find_element_by_css_selector("button[class*=myaccount-btn]")
     logon.click()
+    wait = ui.WebDriverWait(browser,15)
     
     return(browser)
+
+def acct_info(browser):
+    """scrape basic user info.
+
+    keyword arguments:
+    browser (selenium.WebDriver) - selenium webdriver object
+
+    returns:
+    total (float) - account balance
+    name (str) - user full name
+    acct (str) - user account number
+    address (str) - user service address
+    """
+
+    due = browser.find_element_by_xpath("//div[@class='resp-col-12-sm resp-col-8 left contentComponent']")
+    welcome = browser.find_element_by_xpath("//div[@class='resp-col-5 resp-col-5-sm left colorWhite']")
+
+    dollars, cents = due.text.split('\n')[1].split('$')[1].split('.')
+    total = int(dollars) + int(cents)/100
+
+    name_acct = welcome.text.split('\n')[0]
+    address = welcome.text.split('\n')[1]
+
+    name, acct = name_acct.split('(')
+    name = ' '.join(name.split(' ')[:2])
+    acct = acct.split(')')[0]
+    return(total, name, acct, address)
