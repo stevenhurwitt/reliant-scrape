@@ -1,16 +1,19 @@
-from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
-import selenium.webdriver.support.ui as ui
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
+import selenium.webdriver.support.ui as ui
 import selenium.webdriver as webdriver
+from selenium.webdriver import Chrome
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
-from datetime import datetime
 import pandas as pd
 import numpy as np
 import selenium
 import html5lib
+import yaml
 import json
+import time
 import os
 
 def logon(headless, download_path, url, creds):
@@ -182,3 +185,102 @@ def process_data(data, date):
     data.drop(['Hour'], axis = 1, inplace = True)
     data.set_index(['Date'], inplace = True)
     return(data)
+
+def get_daily_use(browser):
+    """
+    iterate thru tables and get daily usage.
+    
+    keyword arguments:
+    browser (selenium.WebDriver) - browser object on account page
+    
+    returns:
+    data (pandas dataframe) - cleaned dataframe of hourly use
+    dt (datetime) - datetime of usage day
+    vars (selenium.WebElement) - web element of chart header
+    """
+    
+    views = browser.find_element_by_xpath("//div[@id='selectusgviewdiv']")
+    views.find_element_by_id('daybtnid').click() #click to daily data
+    time.sleep(2)
+
+    vars = browser.find_element_by_xpath("//div[@id='costandusagedivareaid']")
+    date = vars.find_element_by_id('messgaetxt').text #get date
+    dt = datetime.strptime(date, '%B %d, %Y')
+
+    browser.find_element_by_xpath("//li[@id='tabletid']").click() #click to table view
+    time.sleep(3)
+    
+    data = table_to_df(browser)
+    data = process_data(data, date)
+    
+    total_use = round(np.sum(data['Usage (kWh)']), 2)
+    total_cost = np.sum(data['Cost ($)'])
+    print('{} had usage of {} kWh and cost ${}.'.format(date, total_use, total_cost))
+    
+    return(data, dt, vars)
+
+if __name__ == "__main__":
+
+
+    with open('config.yaml', 'r') as f:
+        config = yaml.load(f, Loader = yaml.FullLoader)
+
+    #logon to site
+    output = logon(config['headless'], config['download'], config['site'], config['creds'])
+    print('logged on successfully.')
+    time.sleep(10)
+
+    #scrape basic info
+    amt, name, acct, address = acct_info(output)
+
+    print('current bill is ${}.'.format(amt))
+    print('service for {}, account {} at {}.'.format(name, acct, address))
+
+    #select account option from menu
+    want_to = output.find_element_by_xpath("//select[@id='wantTo']")
+    options = [x for x in want_to.find_elements_by_tag_name('option')]
+    options_text = [x.text for x in want_to.find_elements_by_tag_name('option')]
+
+    Select(want_to).select_by_visible_text('View usage history')
+    time.sleep(5)
+
+    #make dataframe of daily use
+    master = pd.DataFrame()
+
+    data, date, var = get_daily_use(output)
+    start_date = date
+
+    try:
+        var.find_element_by_id('nextid').click() #click to next day
+        time.sleep(2)
+
+    except:
+        print('out of days.')
+
+    while start_date < datetime.today():
+    
+        time.sleep(5)
+        data, date, var = get_daily_use(output)
+        start_date += timedelta(days = 1)
+    
+        if data.shape[0] > 0:
+            master = pd.concat([master, data], axis = 0)
+    
+        try:
+            var.find_element_by_id('nextid').click() #click to next day
+            time.sleep(2)
+
+        except:
+            print('out of days.')
+
+    #write to .csv
+    base = os.getcwd()
+    date_string = datetime.strftime(datetime.today(), format = '%m%d%Y')
+    fname = 'daily_usage_' + date_string + '.csv'
+    filepath = os.path.join(base, 'data', fname)
+    master.to_csv(filepath)
+    print('wrote daily usage to .csv')
+
+    #plot
+    master.plot(y = 'Usage (kWh)')
+    plt.show()
