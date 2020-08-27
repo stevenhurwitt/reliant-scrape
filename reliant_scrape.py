@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 import selenium.webdriver as webdriver
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
+from datetime import datetime
 import pandas as pd
 import numpy as np
 import selenium
@@ -59,7 +60,7 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-    browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
+    browser = Chrome(executable_path = 'C:\\bin\chromedriver', options = opts)
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
@@ -105,3 +106,79 @@ def acct_info(browser):
     name = ' '.join(name.split(' ')[:2])
     acct = acct.split(')')[0]
     return(total, name, acct, address)
+
+def table_to_df(browser):
+    """parses acct page for usage data
+    
+    keyword arguments:
+    browser (selenium.WebDriver) - browser object on account page
+    
+    returns:
+    data (dataframe) - dataframe of usage table
+    """
+    
+    soup = BeautifulSoup(browser.page_source, features = 'html5lib')
+    table = soup.find_all('tbody', {'id':'transTbody'})
+    headers = soup.find_all('thead', {'class':'classictblhdr'})
+
+    header_row = headers[0].find_all('tr')
+    table_rows = table[0].find_all('tr')
+
+    l = []
+    for tr in table_rows:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        l.append(row)
+    
+    h = []
+    for tr in header_row:
+        th = tr.find_all('th')
+        header = [tr.text for tr in th]
+        h.append(header)
+    
+    data = pd.DataFrame(l, columns = h[0])
+    return(data)
+
+def process_data(data, date):
+    """converts raw data to clean data
+    
+    keyword arguments:
+    data (pandas dataframe) - dataframe read directly from table
+    
+    returns:
+    data (pandas dataframe) - dataframe with final columns & types
+    """
+    
+    data['Usage (kWh)'] = pd.to_numeric(data['Usage (kWh)'])
+    data['Cost ($)'] = pd.to_numeric(data['Cost ($)'])
+    data['Hi'] = [int(a.split(' / ')[0]) for a in list(data['Temp (hi / low)'])]
+    data['Low'] = [int(a.split(' / ')[1]) for a in list(data['Temp (hi / low)'])]
+    data.drop(['Temp (hi / low)'], axis = 1, inplace = True)
+
+    new_hour = []
+    for hour in list(data.Hour):
+        new = []
+        for char in hour:
+            try:
+                new.append(str(int(char)))
+        
+            except:
+                pass
+    
+        new = ''.join(new)
+
+        if ('pm' in hour) and (int(new) < 12):
+            new = int(new) + 12
+            new = str(new)
+    
+        if ('am' in hour) and (int(new) == 12):
+            new = int(new) - 12
+            new = str(new)
+
+        new = date + ' ' + new
+        new_hour.append(new)
+    
+    data['Date'] = [datetime.strptime(h, "%B %d, %Y %H") for h in new_hour]
+    data.drop(['Hour'], axis = 1, inplace = True)
+    data.set_index(['Date'], inplace = True)
+    return(data)
