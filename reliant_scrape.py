@@ -5,7 +5,7 @@ import selenium.webdriver.support.ui as ui
 import selenium.webdriver as webdriver
 from selenium.webdriver import Chrome
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -63,12 +63,12 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-    browser = Chrome(executable_path = 'C:\\bin\chromedriver', options = opts)
+    browser = Chrome(executable_path = '/root/reliant-scrape/chromedriver', options = opts)
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
         
-    browser.get('https://www.reliant.com/public/altLogon.htm')
+    browser.get(url)
     
     user = browser.find_element_by_xpath("//input[@id='altLoginUsername']")
     checkbox = browser.find_element_by_xpath("//input[@id='altRememberMe']")
@@ -79,7 +79,7 @@ def logon(headless, download_path, url, creds):
     
     logon = browser.find_element_by_css_selector("button[class*=myaccount-btn]")
     logon.click()
-    wait = ui.WebDriverWait(browser,15)
+    #wait = ui.WebDriverWait(browser,15)
     
     return(browser)
 
@@ -282,5 +282,5 @@ if __name__ == "__main__":
     print('wrote daily usage to .csv')
 
     #plot
-    master.plot(y = 'Usage (kWh)')
-    plt.show()
+    #master.plot(y = 'Usage (kWh)')
+    #plt.show()
