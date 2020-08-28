@@ -63,7 +63,7 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-    browser = Chrome(executable_path = '/root/reliant-scrape/chromedriver', options = opts)
+    browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
     
     if download_path and headless:
         enable_download_headless(browser, download_path)

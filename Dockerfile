@@ -19,16 +19,14 @@ RUN apt-get -y update
 
 RUN apt-get -y upgrade
 
+RUN apt-get install -y apt-utils
+
 # Magic happens
 RUN apt-get install -y google-chrome-stable \
-    chromium
-
-# Extra for chromedriver
-RUN apt-get install -y libglib2.0-0 \
-    libgconf-2-4 \
-    libfontconfig1
-
-RUN apt-get install -y libnspr4 libnss3 libnss3-tools
+    chromium \
+    chromium-l10n \
+    chromium-shell \
+    chromium-driver
 
 # Installing Unzip
 RUN apt-get install -yqq unzip
@@ -41,7 +39,7 @@ RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/chromedriver
 
-RUN ln -s /usr/local/bin/chromedriver /usr/bin
+#RUN ln -s /usr/local/bin/chromedriver /usr/bin
 
 # Add to path
 RUN export PATH=$PATH:/usr/local/bin/chromedriver
@@ -57,8 +55,22 @@ RUN mkdir -p /root/reliant-scrape
 WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
+RUN cp /root/reliant-scrape/chromedriver /usr/local/bin/
+
 RUN export PATH=$PATH:/root/reliant-scrape/chromedriver
 RUN chmod +x /root/reliant-scrape/chromedriver
+
+RUN apt-get update
+
+# Extra for chromedriver
+RUN apt-get install -y libglib2.0-0 \
+    libfontconfig1 \
+    libc6 \
+    libnspr4 \
+    libsqlite3-0 \
+    libnspr4
+
+RUN apt-get install -y libgconf-2-4 libnss3-dev libx11-xcb-dev
 
 # Create the environment:
 RUN conda create -n reliant
@@ -66,6 +78,7 @@ RUN conda create -n reliant
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant", "/bin/bash", "-c"]
 
+RUN /usr/local/bin/chromedriver --version
 RUN conda update -y -n base -c defaults conda
 
 RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium

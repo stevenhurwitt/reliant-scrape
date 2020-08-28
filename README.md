@@ -18,3 +18,7 @@ simple webscrape of daily usage data in python.
     - creds ```json``` is a simple file with ```user``` and ```password``` fields
 - run the ```python``` file thru vscode, command line, etc
 - use the ```jupyter notebook``` to debug, etc
+
+## to do
+
+- error check data and push to bigquery table or some cloud db - backup daily/often?
