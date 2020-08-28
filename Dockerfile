@@ -66,10 +66,9 @@ RUN conda create -n reliant
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant", "/bin/bash", "-c"]
 
-RUN /root/reliant-scrape/chromedriver --version
-#RUN conda update -y -n base -c defaults conda
+RUN conda update -y -n base -c defaults conda
 
-#RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium
+RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium
 
 # The code to run when container is started:
-#ENTRYPOINT ["conda", "run", "-n", "reliant", "python", "reliant_scrape.py"]
+ENTRYPOINT ["conda", "run", "-n", "reliant", "python", "reliant_scrape.py"]
