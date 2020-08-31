@@ -34,6 +34,7 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--ignore-certificate-errors')
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
+    opts.add_argument("--remote-debugging-port=9222")
     # opts.binary_location = '/usr/bin/google-chrome-stable'
     
     with open(creds, 'r') as f:
@@ -41,6 +42,7 @@ def logon(headless, download_path, url, creds):
 
     if headless:
         opts.add_argument('--headless')
+        opts.add_argument('window-size=1920x1080')
         assert opts.headless
         
         def enable_download_headless(browser, download_dir):
@@ -203,20 +205,21 @@ def get_daily_use(browser):
     
     views = browser.find_element_by_xpath("//div[@id='selectusgviewdiv']")
     views.find_element_by_id('daybtnid').click() #click to daily data
-    time.sleep(2)
+    time.sleep(5)
 
     vars = browser.find_element_by_xpath("//div[@id='costandusagedivareaid']")
     date = vars.find_element_by_id('messgaetxt').text #get date
     dt = datetime.strptime(date, '%B %d, %Y')
+    time.sleep(10)
 
     browser.find_element_by_xpath("//li[@id='tabletid']").click() #click to table view
-    time.sleep(3)
+    time.sleep(5)
     
     data = table_to_df(browser)
     data = process_data(data, date)
     
     total_use = round(np.sum(data['Usage (kWh)']), 2)
-    total_cost = np.sum(data['Cost ($)'])
+    total_cost = round(np.sum(data['Cost ($)']), 2)
     print('{} had usage of {} kWh and cost ${}.'.format(date, total_use, total_cost))
     
     return(data, dt, vars)
@@ -230,7 +233,7 @@ if __name__ == "__main__":
     #logon to site
     output = logon(config['headless'], config['download'], config['site'], config['creds'])
     print('logged on successfully.')
-    time.sleep(10)
+    time.sleep(15)
 
     #scrape basic info
     amt, name, acct, address = acct_info(output)
