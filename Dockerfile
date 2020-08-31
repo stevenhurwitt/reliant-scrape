@@ -8,38 +8,15 @@ RUN apt-get update \
 # Add python 3.8
 FROM python:3.8
 
-# Adding trusting keys to apt for repositories
+# Adding Google Chrome to the repositories
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 
-# Adding Google Chrome to the repositories
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
 # Updating apt to see and install Google Chrome
 RUN apt-get -y update
 
 RUN apt-get -y upgrade
-
-RUN apt-get install -y apt-utils
-
-# Magic happens
-RUN apt-get install -y google-chrome-stable \
-    chromium \
-    chromium-l10n \
-    chromium-shell \
-    chromium-driver
-
-# Installing Unzip
-RUN apt-get install -yqq unzip
-
-# Download the Chrome Driver
-RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
-
-# Unzip the Chrome Driver into /usr/local/bin directory
-RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/chromedriver
-
-#RUN ln -s /usr/local/bin/chromedriver /usr/bin
 
 # Add to path
 RUN export PATH=$PATH:/usr/local/bin/chromedriver
@@ -57,8 +34,8 @@ COPY . /root/reliant-scrape
 
 RUN cp /root/reliant-scrape/chromedriver /usr/local/bin/
 
-RUN export PATH=$PATH:/root/reliant-scrape/chromedriver
-RUN chmod +x /root/reliant-scrape/chromedriver
+RUN export PATH=$PATH:/usr/local/bin/chromedriver
+RUN chmod +x /usr/local/bin/chromedriver
 
 RUN apt-get update
 
@@ -68,9 +45,19 @@ RUN apt-get install -y libglib2.0-0 \
     libc6 \
     libnspr4 \
     libsqlite3-0 \
-    libnspr4
+    libnspr4 \
+    libgconf-2-4 \
+    libnss3-dev \
+    libx11-xcb-dev \
+    libx11-doc \
+    libxcb-doc \
+    default-dbus-session-bus
 
-RUN apt-get install -y libgconf-2-4 libnss3-dev libx11-xcb-dev
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+RUN whereis google-chrome-stable
 
 # Create the environment:
 RUN conda create -n reliant
@@ -78,7 +65,6 @@ RUN conda create -n reliant
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant", "/bin/bash", "-c"]
 
-RUN /usr/local/bin/chromedriver --version
 RUN conda update -y -n base -c defaults conda
 
 RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium

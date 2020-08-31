@@ -34,7 +34,7 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--ignore-certificate-errors')
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
-    #opts.binary_location = '/usr/bin/google-chrome-stable'
+    # opts.binary_location = '/usr/bin/google-chrome-stable'
     
     with open(creds, 'r') as f:
         creds = json.load(f)
@@ -63,7 +63,9 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-    browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
+    # browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
+
+    browser = Chrome(executable_path = 'chromedriver', options = opts)
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
@@ -71,7 +73,7 @@ def logon(headless, download_path, url, creds):
     browser.get(url)
     
     user = browser.find_element_by_xpath("//input[@id='altLoginUsername']")
-    checkbox = browser.find_element_by_xpath("//input[@id='altRememberMe']")
+    # checkbox = browser.find_element_by_xpath("//input[@id='altRememberMe']")
     password = browser.find_element_by_xpath("//input[@id='altLoginPassword']")
     
     user.send_keys(creds['user'])
