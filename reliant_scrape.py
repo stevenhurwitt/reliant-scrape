@@ -5,7 +5,7 @@ import selenium.webdriver.support.ui as ui
 import selenium.webdriver as webdriver
 from selenium.webdriver import Chrome
 from datetime import datetime, timedelta
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -287,5 +287,5 @@ if __name__ == "__main__":
     print('wrote daily usage to .csv')
 
     #plot
-    #master.plot(y = 'Usage (kWh)')
-    #plt.show()
+    master.plot(y = 'Usage (kWh)')
+    plt.show()

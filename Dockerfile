@@ -67,7 +67,8 @@ SHELL ["conda", "run", "-n", "reliant", "/bin/bash", "-c"]
 
 RUN conda update -y -n base -c defaults conda
 
-RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium
+RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium google-api-python-client \
+google-auth google-auth-oauthlib google-cloud-bigquery google-cloud-bigquery-storage
 
 # The code to run when container is started:
 ENTRYPOINT ["conda", "run", "-n", "reliant", "python", "reliant_scrape.py"]
