@@ -217,6 +217,13 @@ def get_daily_use(browser):
     
     data = table_to_df(browser)
     data = process_data(data, date)
+
+    """if data.shape[0] > 0:
+        base = os.getcwd()
+        date_string = datetime.strftime(dt, format = '%m%d%Y')
+        fname = 'daily_one_day_' + date_string + '.csv'
+        filepath = os.path.join(base, 'data', fname)
+        data.to_csv(filepath)"""
     
     total_use = round(np.sum(data['Usage (kWh)']), 2)
     total_cost = round(np.sum(data['Cost ($)']), 2)
@@ -287,5 +294,9 @@ if __name__ == "__main__":
     print('wrote daily usage to .csv')
 
     #plot
-    master.plot(y = 'Usage (kWh)')
-    plt.show()
+    try:
+        master.plot(y = 'Usage (kWh)')
+        plt.show()
+    
+    except:
+        pass
