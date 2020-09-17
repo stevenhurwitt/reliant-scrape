@@ -20,7 +20,3 @@ simple webscrape of daily usage data in python.
     - `db_creds.json` is a similar file with `host`, `port`, `user`, `password`, etc.
 - run the `python` file thru vscode, command line, etc
 - use the `jupyter notebook` to debug, etc
-
-## to do
-
-- error check data and push to bigquery table or some cloud db - backup daily/often?
