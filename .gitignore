@@ -2,3 +2,4 @@
 .DS_Store
 creds_web.json
 creds_google.json
+db_creds.json
