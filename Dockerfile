@@ -60,15 +60,14 @@ RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 RUN whereis google-chrome-stable
 
 # Create the environment:
-RUN conda create -n reliant
+RUN conda create -n reliant-37
 
 # Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "reliant", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
 
 RUN conda update -y -n base -c defaults conda
 
-RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium google-api-python-client \
-google-auth google-auth-oauthlib google-cloud-bigquery google-cloud-bigquery-storage
+RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysql-connector-python sqlalchemy
 
 # The code to run when container is started:
-ENTRYPOINT ["conda", "run", "-n", "reliant", "python", "reliant_scrape.py"]
+ENTRYPOINT ["conda", "run", "-n", "reliant-37", "python", "reliant_scrape.py"]
