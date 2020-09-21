@@ -44,7 +44,11 @@ def logon(headless, download_path, url, creds):
 
     if headless:
         opts.add_argument('--headless')
-        opts.add_argument('window-size=1920x1080')
+        opts.add_argument('--window-size=1920x1080')
+        opts.add_argument("--disable-extensions")
+        opts.add_argument("--proxy-server='direct://'")
+        opts.add_argument("--proxy-bypass-list=*")
+        opts.add_argument('--disable-gpu')
         opts.add_argument("--log-level=3")
         assert opts.headless
         
