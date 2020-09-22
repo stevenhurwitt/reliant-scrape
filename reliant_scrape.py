@@ -1,12 +1,13 @@
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
+from sqlalchemy import create_engine, types
 import selenium.webdriver.support.ui as ui
 import selenium.webdriver as webdriver
 from selenium.webdriver import Chrome
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
+import mysql.connector
 import pandas as pd
 import numpy as np
 import selenium
@@ -14,6 +15,7 @@ import html5lib
 import yaml
 import json
 import time
+import sys
 import os
 
 def logon(headless, download_path, url, creds):
@@ -42,7 +44,12 @@ def logon(headless, download_path, url, creds):
 
     if headless:
         opts.add_argument('--headless')
-        opts.add_argument('window-size=1920x1080')
+        opts.add_argument('--window-size=1920x1080')
+        opts.add_argument("--disable-extensions")
+        opts.add_argument("--proxy-server='direct://'")
+        opts.add_argument("--proxy-bypass-list=*")
+        opts.add_argument('--disable-gpu')
+        opts.add_argument("--log-level=3")
         assert opts.headless
         
         def enable_download_headless(browser, download_dir):
@@ -231,6 +238,49 @@ def get_daily_use(browser):
     
     return(data, dt, vars)
 
+def mysql_query(query, creds):
+    """
+    query database and return df
+
+    keyword arguments:
+    query (str) - query text
+    creds (dict) - db credentials
+
+    returns:
+    results_df (pandas dataframe) - results table
+    """
+
+    try:
+        conn =  mysql.connector.connect(host = creds['Endpoint'], 
+                                        user = creds['User'], 
+                                        passwd=creds['Password'], 
+                                        port = creds['Port'], 
+                                        database = creds['Type'])
+        cur = conn.cursor()
+        cur.execute(query)
+        query_results = cur.fetchall()
+        results_df = pd.DataFrame(query_results, columns = cur.column_names)
+        return(results_df)
+
+    except Exception as e:
+        print("Database connection failed due to {}".format(e))
+
+def table_upload(df, db, table, creds):
+    """
+    uploads dataframe to db table
+
+    keyword arguments:
+    df (pandas df) - dataframe to push
+    db (str) - database name
+    table (str) - table name
+    creds (dict) - database credentials
+    """
+
+    connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    engine = create_engine(connect_str)
+    df.to_sql(table, con = engine, index = False, if_exists = 'append')
+    print('wrote df to sql table.')
+
 if __name__ == "__main__":
 
 
@@ -293,10 +343,32 @@ if __name__ == "__main__":
     master.to_csv(filepath)
     print('wrote daily usage to .csv')
 
-    #plot
+    #prep for db
     try:
-        master.plot(y = 'Usage (kWh)')
-        plt.show()
-    
+        master['Date'] = master.index
+        master = master[['Date', 'Usage (kWh)', 'Cost ($)', 'Hi', 'Low']]
+
     except:
-        pass
+        sys.exit('webscrape failed to return data!')
+
+    #create aws rds client, upload table
+    with open('db_creds.json', 'r') as f:
+        db_creds = json.load(f)
+
+    os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
+
+    result = mysql_query("""SELECT MIN(Date) as min_date, MAX(Date) as max_date, COUNT(*) as count 
+                    FROM reliant_energy_db.daily_use""", db_creds)
+
+    print('found data range of {} to {} with {} records.'.format(result.min_date[0], result.max_date[0], result['count'][0]))
+
+    try:
+        table_upload(master, 'reliant_energy_db', 'daily_use', db_creds)
+
+    except:
+        print('table upload failed, check .csv.')
+
+    result = mysql_query("""SELECT MIN(Date) as min_date, MAX(Date) as max_date, COUNT(*) as count 
+                    FROM reliant_energy_db.daily_use""", db_creds)
+                    
+    print('new data range is {} to {} with {} records.'.format(result.min_date[0], result.max_date[0], result['count'][0]))
