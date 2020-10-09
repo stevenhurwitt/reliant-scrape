@@ -44,7 +44,11 @@ def logon(headless, download_path, url, creds):
 
     if headless:
         opts.add_argument('--headless')
-        opts.add_argument('window-size=1920x1080')
+        opts.add_argument('--window-size=1920x1080')
+        opts.add_argument("--disable-extensions")
+        opts.add_argument("--proxy-server='direct://'")
+        opts.add_argument("--proxy-bypass-list=*")
+        opts.add_argument('--disable-gpu')
         opts.add_argument("--log-level=3")
         assert opts.headless
         
@@ -215,7 +219,12 @@ def get_daily_use(browser):
     dt = datetime.strptime(date, '%B %d, %Y')
     time.sleep(10)
 
-    browser.find_element_by_xpath("//li[@id='tabletid']").click() #click to table view
+    #clicking on element doesn't work in headless, try javascript
+    #browser.find_element_by_xpath("//li[@id='tabletid']").click() #click to table view
+    js = """drawTable();
+            return false;"""
+    
+    browser.execute_script(js)
     time.sleep(5)
     
     data = table_to_df(browser)
@@ -303,7 +312,7 @@ if __name__ == "__main__":
     time.sleep(5)
 
     #make dataframe of daily use
-    master = pd.DataFrame()
+    stage = pd.DataFrame()
 
     data, date, var = get_daily_use(output)
     start_date = date
@@ -322,7 +331,7 @@ if __name__ == "__main__":
         start_date += timedelta(days = 1)
     
         if data.shape[0] > 0:
-            master = pd.concat([master, data], axis = 0)
+            stage = pd.concat([stage, data], axis = 0)
     
         try:
             var.find_element_by_id('nextid').click() #click to next day
@@ -336,35 +345,41 @@ if __name__ == "__main__":
     date_string = datetime.strftime(datetime.today(), format = '%m%d%Y')
     fname = 'daily_usage_' + date_string + '.csv'
     filepath = os.path.join(base, 'data', fname)
-    master.to_csv(filepath)
+    stage.to_csv(filepath)
     print('wrote daily usage to .csv')
 
     #prep for db
     try:
-        master['Date'] = master.index
-        master = master[['Date', 'Usage (kWh)', 'Cost ($)', 'Hi', 'Low']]
+        stage['Date'] = stage.index
+        stage = stage[['Date', 'Usage (kWh)', 'Cost ($)', 'Hi', 'Low']]
 
     except:
-        sys.exit('webscrape failed to return data!')
+        print('webscrape failed to return data!')
+        sys.exit()
 
     #create aws rds client, upload table
     with open('db_creds.json', 'r') as f:
         db_creds = json.load(f)
 
     os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
-
     result = mysql_query("""SELECT MIN(Date) as min_date, MAX(Date) as max_date, COUNT(*) as count 
                     FROM reliant_energy_db.daily_use""", db_creds)
 
     print('found data range of {} to {} with {} records.'.format(result.min_date[0], result.max_date[0], result['count'][0]))
 
-    try:
-        table_upload(master, 'reliant_energy_db', 'daily_use', db_creds)
+    recent = [d > result.max_date[0] for d in stage.Date]
+    merge = stage.iloc[recent,:]
 
-    except:
-        print('table upload failed, check .csv.')
+
+    if (len(merge.index) > 0):
+        print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.min(merge['Date']), merge.shape[0]))
+        table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
+
+    else:
+        print('failed to find recent data.')
+        sys.exit()
 
     result = mysql_query("""SELECT MIN(Date) as min_date, MAX(Date) as max_date, COUNT(*) as count 
                     FROM reliant_energy_db.daily_use""", db_creds)
                     
-    print('new data range is {} to {} with {} records.'.format(result.min_date[0], result.max_date[0], result['count'][0]))
+    print('final data range is {} to {} with {} records.'.format(result.min_date[0], result.max_date[0], result['count'][0]))
