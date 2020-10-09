@@ -5,8 +5,8 @@ FROM ubuntu:20.04
 RUN apt-get update \
   && apt-get -y upgrade
 
-# Add python 3.8
-FROM python:3.8
+# Add python 3.7
+FROM python:3.7
 
 # Adding Google Chrome to the repositories
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
