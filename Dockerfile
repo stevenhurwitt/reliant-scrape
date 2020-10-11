@@ -57,13 +57,13 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
+RUN conda update -y -n base -c defaults conda
+
 # Create the environment:
 RUN conda create -n reliant-37
 
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
-
-RUN conda update -y -n base -c defaults conda
 
 RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysql-connector-python sqlalchemy
 
