@@ -1,10 +1,6 @@
 # Start from ubuntu
 FROM ubuntu:20.04
 
-# Update repos and install dependencies
-RUN apt-get update \
-  && apt-get -y upgrade
-
 # Add python 3.7
 FROM python:3.7
 
@@ -14,12 +10,11 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
 # Updating apt to see and install Google Chrome
-RUN apt-get -y update
-
-RUN apt-get -y upgrade
+RUN apt-get update \
+  && apt-get -y upgrade
 
 # Add to path
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
+RUN export PATH=$PATH:/usr/bin/chromedriver
 
 # Set display port as an environment variable
 ENV DISPLAY=:99
@@ -32,10 +27,10 @@ RUN mkdir -p /root/reliant-scrape
 WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
-RUN cp /root/reliant-scrape/chromedriver /usr/local/bin/
+RUN cp /root/reliant-scrape/chromedriver /usr/bin/
 
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
-RUN chmod +x /usr/local/bin/chromedriver
+RUN export PATH=$PATH:/usr/bin/chromedriver
+RUN chmod +x /usr/bin/chromedriver
 
 RUN apt-get update
 
@@ -57,13 +52,13 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
+RUN conda update -y -n base -c defaults conda
+
 # Create the environment:
 RUN conda create -n reliant-37
 
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
-
-RUN conda update -y -n base -c defaults conda
 
 RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysql-connector-python sqlalchemy
 
