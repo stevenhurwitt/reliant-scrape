@@ -370,7 +370,7 @@ if __name__ == "__main__":
 
 
     if (len(merge.index) > 0):
-        print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.min(merge['Date']), merge.shape[0]))
+        print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.max(merge['Date']), merge.shape[0]))
         table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
 
     else:
