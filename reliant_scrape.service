@@ -1,0 +1,11 @@
+[Unit]
+Description=Executes reliant_scrape
+After=default.target docker_network_apps.service
+Requires=default.target docker_network_apps.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStartPre=/usr/bin/docker pull stevenhurwitt/reliant-scrape:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm -f reliant_scrape_container 2>/dev/null"
+ExecStart=/bin/bash -c "/usr/bin/docker run --name reliant_scrape_container stevenhurwitt/reliant-scrape:latest stevenhurwitt/reliant-scrape"
