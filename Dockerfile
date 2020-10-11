@@ -1,10 +1,6 @@
 # Start from ubuntu
 FROM ubuntu:20.04
 
-# Update repos and install dependencies
-RUN apt-get update \
-  && apt-get -y upgrade
-
 # Add python 3.7
 FROM python:3.7
 
@@ -14,9 +10,8 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
 # Updating apt to see and install Google Chrome
-RUN apt-get -y update
-
-RUN apt-get -y upgrade
+RUN apt-get -y update \
+  && apt-get -y upgrade
 
 # Add to path
 RUN export PATH=$PATH:/usr/local/bin/chromedriver
