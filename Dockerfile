@@ -19,7 +19,7 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 
 # Add to path
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
+RUN export PATH=$PATH:/usr/bin/chromedriver
 
 # Set display port as an environment variable
 ENV DISPLAY=:99
@@ -32,10 +32,10 @@ RUN mkdir -p /root/reliant-scrape
 WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
-RUN cp /root/reliant-scrape/chromedriver /usr/local/bin/
+RUN cp /root/reliant-scrape/chromedriver /usr/bin/
 
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
-RUN chmod +x /usr/local/bin/chromedriver
+RUN export PATH=$PATH:/usr/bin/chromedriver
+RUN chmod +x /usr/bin/chromedriver
 
 RUN apt-get update
 
