@@ -37,7 +37,7 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
     opts.add_argument("--remote-debugging-port=9222")
-    opts.binary_location = '/usr/bin/chromium-browser'
+    opts.binary_location = '/usr/bin/google-chrome-stable'
     
     with open(creds, 'r') as f:
         creds = json.load(f)
@@ -71,8 +71,6 @@ def logon(headless, download_path, url, creds):
             'safebrowsing.disable_download_protection': True}
 
     opts.add_experimental_option("prefs", prefs)
-
-    # browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
 
     browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
     
