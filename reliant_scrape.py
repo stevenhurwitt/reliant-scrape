@@ -279,7 +279,7 @@ def table_upload(df, db, table, creds):
     creds (dict) - database credentials
     """
 
-    connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    connect_str = 'mysql+mysqlconnector://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')

@@ -10,7 +10,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
 # Updating apt to see and install Google Chrome
-RUN apt-get update \
+RUN apt-get -y update \
   && apt-get -y upgrade
 
 # Add to path
@@ -60,7 +60,7 @@ RUN conda create -n reliant-37
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
 
-RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysql-connector-python sqlalchemy
+RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysqlclient mysql-connector-python sqlalchemy
 
 # The code to run when container is started:
 ENTRYPOINT ["conda", "run", "-n", "reliant-37", "python", "reliant_scrape.py"]
