@@ -60,7 +60,7 @@ RUN conda create -n reliant-37
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
 
-RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysql-connector-python sqlalchemy
+RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysqlclient mysql-connector-python sqlalchemy
 
 # The code to run when container is started:
 ENTRYPOINT ["conda", "run", "-n", "reliant-37", "python", "reliant_scrape.py"]
