@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\steve\\.conda\\envs\\reliant-37\\python.exe",
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python",
     "git.ignoreLimitWarning": true
 }
