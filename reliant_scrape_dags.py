@@ -1,20 +1,29 @@
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.keys import Keys
-from sqlalchemy import create_engine, types
-import selenium.webdriver.support.ui as ui
-import selenium.webdriver as webdriver
-from selenium.webdriver import Chrome
+from airflow import DAG
 from datetime import datetime, timedelta
-from bs4 import BeautifulSoup
-import mysql.connector
-import pandas as pd
-import numpy as np
-import selenium
-import html5lib
-import yaml
-import json
-import time
-import sys
-import os
+from airflow.operators.bash_operator import BashOperator
 
+args = {
+    'owner': 'steven',
+    'start_date': datetime(2020, 10, 20),
+    'depends_on_past': True,
+}
+
+dag = DAG(
+    dag_id = 'reliant-scrape',
+    schedule_interval = '0 22 * * *',
+    default_args = args,
+)
+
+anaconda_dag = BashOperator(
+    task_id = 'anaconda',
+    bash_command = 'conda activate reliant-37',
+    dag = dag
+)
+
+reliant_scrape_dag = BashOperator(
+    task_id='reliant_scrape',
+    bash_command = '~/miniconda3/envs/reliant-37/bin/python ~/reliant-scrape/reliant_scrape.py',
+    dag = dag
+)
+
+anaconda_dag >> reliant_scrape_dag
