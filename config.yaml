@@ -4,6 +4,6 @@ headless: true
 # download: '/Users/stevenhurwitt/Documents/reliant-scrape/data'
 download: /home/ubuntu/reliant-scrape/data
 site: 'https://www.reliant.com/public/altLogon.htm'
-creds: 'creds_web.json'
+creds: '/media/steven/big_boi/reliant-scrape/creds_web.json'
 # creds: "C:\\Users\\steve\\Documents\\creds_web.json"
 # creds: '/Users/stevenhurwitt/Documents/creds_web.json'
