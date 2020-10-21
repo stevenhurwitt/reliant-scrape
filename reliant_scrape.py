@@ -287,7 +287,7 @@ def table_upload(df, db, table, creds):
 if __name__ == "__main__":
 
 
-    with open('/media/steven/big_boi/reliant-scrape/config.yaml', 'r') as f:
+    with open('config.yaml', 'r') as f:
         config = yaml.load(f, Loader = yaml.FullLoader)
 
     #logon to site
@@ -356,7 +356,7 @@ if __name__ == "__main__":
         sys.exit()
 
     #create aws rds client, upload table
-    with open('/media/steven/big_boi/reliant-scrape/db_creds.json', 'r') as f:
+    with open('db_creds.json', 'r') as f:
         db_creds = json.load(f)
 
     os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
