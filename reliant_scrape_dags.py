@@ -21,16 +21,8 @@ dag = DAG(
     default_args = args,
 )
 
-anaconda_dag = BashOperator(
-    task_id = 'anaconda',
-    bash_command = 'conda activate reliant',
-    dag = dag
-)
-
 reliant_scrape_dag = BashOperator(
     task_id='reliant_scrape',
     bash_command = 'python /media/steven/big_boi/reliant-scrape/reliant_scrape.py',
     dag = dag
 )
-
-anaconda_dag >> reliant_scrape_dag
