@@ -14,7 +14,7 @@ RUN apt-get -y update \
   && apt-get -y upgrade
 
 # Add to path
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
+RUN export PATH=$PATH:/usr/bin/chromedriver
 
 # Set display port as an environment variable
 ENV DISPLAY=:99
@@ -52,13 +52,13 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
 
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
+RUN conda update -y -n base -c defaults conda
+
 # Create the environment:
 RUN conda create -n reliant-37
 
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
-
-RUN conda update -y -n base -c defaults conda
 
 RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysqlclient mysql-connector-python sqlalchemy
 

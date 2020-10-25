@@ -20,3 +20,11 @@ simple webscrape of daily usage data in python.
     - `db_creds.json` is a similar file with `host`, `port`, `user`, `password`, etc.
 - run the `python` file thru vscode, command line, etc
 - use the `jupyter notebook` to debug, etc
+
+## automated docker runs
+
+copy `reliant_scrape.server` and `reliant_scrape.timer` to `/etc/systemd/system/`. this will execute: 
+
+```docker run --name reliant_scrape_container stevenhurwitt/reliant-scrape:latest stevenhurwitt/reliant-scrape``` 
+
+at 22:00 daily.
