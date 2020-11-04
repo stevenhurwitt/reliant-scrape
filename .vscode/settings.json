@@ -1,4 +1,7 @@
 {
-    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python",
-    "git.ignoreLimitWarning": true
+<<<<<<< HEAD
+    "python.pythonPath": "/home/pi/miniforge-pypy3/envs/reliant/bin/python"
+=======
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
+>>>>>>> 89f93dbca48d19d27f2d911c815eaf28abb02878
 }

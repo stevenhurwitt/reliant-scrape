@@ -1,7 +1,7 @@
 [Unit]
 Description=Executes reliant_scrape
-After=default.target docker_network_apps.service
-Requires=default.target docker_network_apps.service
+After=default.target docker.service
+Requires=default.target docker.service
 
 [Service]
 Type=oneshot
