@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\queries"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\queries\\reliant-energy-sql-server-create-table.sql",
   "PreviewInSolutionExplorer": false
 }

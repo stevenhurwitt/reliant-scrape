@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
     "git.ignoreLimitWarning": true
+=======
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
+>>>>>>> e5000ea47e6d216b9d478a9429a5e649db1148fc
 }
