@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python",
+    "git.ignoreLimitWarning": true
 }
