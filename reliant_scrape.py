@@ -73,11 +73,8 @@ def logon(headless, download_path, url, creds):
     opts.add_experimental_option("prefs", prefs)
 
     browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
-<<<<<<< HEAD
 
     # browser = Chrome(executable_path = 'chromedriver', options = opts)
-=======
->>>>>>> e5000ea47e6d216b9d478a9429a5e649db1148fc
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
