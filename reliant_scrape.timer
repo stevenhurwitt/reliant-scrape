@@ -1,0 +1,8 @@
+[Unit]
+Description=reliant_scrape runs at 22:00
+
+[Timer]
+OnCalendar=22:00:00
+
+[Install]
+WantedBy=multi-user.target

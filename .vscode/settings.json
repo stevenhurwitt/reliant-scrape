@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 {
     "python.pythonPath": "C:\\Users\\Steven Hurwitt\\AppData\\Local\\Programs\\Python\\Python38\\python.exe"
+=======
+{
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
+>>>>>>> b975854f0ae24e0eebb9791cb3387c9f5ab1590e
 }
