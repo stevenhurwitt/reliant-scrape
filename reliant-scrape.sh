@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/pi/Documents/reliant-scrape
+cd /home/ubuntu/Documents/reliant-scrape
 echo changed directory...
 source ./reliant/bin/activate
 echo activated environment, running script...
