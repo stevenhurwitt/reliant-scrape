@@ -30,8 +30,7 @@ RUN apt-get install -y libglib2.0-0 \
     libxcb-doc \
     default-dbus-session-bus \
     chromium \
-    chromium-driver \
-    python-mysqldb
+    chromium-driver
 
 # add chromedriver to path
 RUN export PATH=$PATH:/usr/bin/chromedriver
