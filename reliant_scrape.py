@@ -281,6 +281,7 @@ def table_upload(df, db, table, creds):
     creds (dict) - database credentials
     """
 
+    ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
     connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
