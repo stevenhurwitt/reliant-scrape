@@ -72,7 +72,7 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-    # browser = Chrome(executable_path = '/usr/local/bin/chromedriver', options = opts)
+    # browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
 
     browser = Chrome(executable_path = 'chromedriver', options = opts)
     
@@ -281,6 +281,7 @@ def table_upload(df, db, table, creds):
     creds (dict) - database credentials
     """
 
+    ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
     connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
@@ -372,7 +373,7 @@ if __name__ == "__main__":
 
 
     if (len(merge.index) > 0):
-        print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.min(merge['Date']), merge.shape[0]))
+        print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.max(merge['Date']), merge.shape[0]))
         table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
 
     else:
