@@ -243,6 +243,45 @@ def get_daily_use(browser):
     
     return(data, dt, vars)
 
+def sql_query(query, creds):
+    
+    def handle_datetimeoffset(dto_value):
+        # ref: https://github.com/mkleehammer/pyodbc/issues/134#issuecomment-281739794
+        tup = struct.unpack("<6hI2h", dto_value)  # e.g., (2017, 3, 16, 10, 35, 18, 0, -6, 0)
+        tweaked = [tup[i] // 100 if i == 6 else tup[i] for i in range(len(tup))]
+        return "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:07d} {:+03d}:{:02d}".format(*tweaked)
+    
+    def handle_hierarchy_id(v):
+      return str(v)
+
+    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + creds['Endpoint'] 
+                          + ';DATABASE=' + creds['Database'] 
+                          + ';UID='  + creds['User']
+                          + ';PWD=' + creds['Password'] 
+                          + ';MARS_CONNECTION=no')
+
+    cursor = cnxn.cursor()
+    cnxn.add_output_converter(-155, handle_datetimeoffset)
+    cnxn.add_output_converter(-151, handle_hierarchy_id)
+
+    cursor.execute(query)
+    column_names = [column[0] for column in cursor.description]
+    results = []
+    
+    try:
+        """row = cursor.fetchone()
+        
+        while row is not None: 
+            results.append(row)
+            row = cursor.fetchone()"""
+        results_df = pd.read_sql(query, cnxn)     
+        #results_df = pd.DataFrame.from_records(results, columns = column_names)
+        return(results_df)
+
+    except pyodbc.ProgrammingError as e:
+        print('datetimeoffset type found, details: {}.'.format(e))
+        return(None)
+
 def mysql_query(query, creds):
     """
     query database and return df
@@ -282,7 +321,8 @@ def table_upload(df, db, table, creds):
     """
 
     ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
-    connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    #connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
@@ -362,7 +402,7 @@ if __name__ == "__main__":
     with open('db_creds.json', 'r') as f:
         db_creds = json.load(f)
 
-    os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
+    #os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
     result = mysql_query("""SELECT MIN(Date) as min_date, MAX(Date) as max_date, COUNT(*) as count 
                     FROM reliant_energy_db.daily_use""", db_creds)
 
@@ -374,7 +414,7 @@ if __name__ == "__main__":
 
     if (len(merge.index) > 0):
         print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.max(merge['Date']), merge.shape[0]))
-        table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
+        table_upload(merge, 'raspberrypi', 'dbo.reliant_energy', db_creds)
 
     else:
         print('failed to find recent data.')
