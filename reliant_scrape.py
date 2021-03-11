@@ -37,11 +37,8 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
     opts.add_argument("--remote-debugging-port=9222")
-<<<<<<< HEAD
-    #opts.binary_location = '/usr/bin/chromium-browser'
-=======
-    opts.binary_location = '/usr/bin/chromium'
->>>>>>> f023c909399aadece916e7c192f399592e64c54e
+    #opts.binary_location = '/usr/bin/chromium-browser' raspberry pi
+    opts.binary_location = '/usr/bin/chromium' #docker
     
     with open(creds, 'r') as f:
         creds = json.load(f)
@@ -76,13 +73,7 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
-<<<<<<< HEAD
-    browser = Chrome(executable_path = 'chromedriver', options = opts)
-=======
     browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
-
-    # browser = Chrome(executable_path = 'chromedriver', options = opts)
->>>>>>> f023c909399aadece916e7c192f399592e64c54e
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
