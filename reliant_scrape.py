@@ -8,6 +8,7 @@ from selenium.webdriver import Chrome
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import mysql.connector
+import pyodbc
 import pandas as pd
 import numpy as np
 import selenium
