@@ -4,37 +4,19 @@ FROM ubuntu:20.04
 # Add python 3.7
 FROM python:3.7
 
-# Adding Google Chrome to the repositories
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-
 # Updating apt to see and install Google Chrome
 RUN apt-get -y update \
   && apt-get -y upgrade
 
-# Add to path
-RUN export PATH=$PATH:/usr/local/bin/chromedriver
-
 # Set display port as an environment variable
 ENV DISPLAY=:99
-
-# Use anaconda environment
-FROM continuumio/miniconda3
 
 # Make directory & copy
 RUN mkdir -p /root/reliant-scrape
 WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
-RUN cp /root/reliant-scrape/chromedriver /usr/bin/
-
-RUN export PATH=$PATH:/usr/bin/chromedriver
-RUN chmod +x /usr/bin/chromedriver
-
-RUN apt-get update
-
-# Extra for chromedriver
+# chrome & chromedriver
 RUN apt-get install -y libglib2.0-0 \
     libfontconfig1 \
     libc6 \
@@ -46,21 +28,16 @@ RUN apt-get install -y libglib2.0-0 \
     libx11-xcb-dev \
     libx11-doc \
     libxcb-doc \
-    default-dbus-session-bus
+    default-dbus-session-bus \
+    chromium \
+    chromium-driver
 
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# add chromedriver to path
+RUN export PATH=$PATH:/usr/bin/chromedriver
+RUN chmod +x /usr/bin/chromedriver
 
-RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
-
-# Create the environment:
-RUN conda create -n reliant-37
-
-# Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "reliant-37", "/bin/bash", "-c"]
-
-RUN conda update -y -n base -c defaults conda
-
-RUN conda install -y beautifulsoup4 html5lib numpy pandas pyyaml selenium mysqlclient mysql-connector-python sqlalchemy
+#install packages
+RUN pip3 install -r /root/reliant-scrape/requirements.txt
 
 # The code to run when container is started:
-ENTRYPOINT ["conda", "run", "-n", "reliant-37", "python", "reliant_scrape.py"]
+ENTRYPOINT ["python3", "reliant_scrape.py"]
