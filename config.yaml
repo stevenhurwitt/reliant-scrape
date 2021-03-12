@@ -1,7 +1,8 @@
-headless: true
+headless: false
 # download: '/root/reliant-scrape/data'
-download: "C:\\Users\\steve\\Documents\\reliant-scrape\\data"
+# download: "C:\\Users\\steve\\Documents\\reliant-scrape\\data"
 # download: '/Users/stevenhurwitt/Documents/reliant-scrape/data'
+download: /home/ubuntu/reliant-scrape/data
 site: 'https://www.reliant.com/public/altLogon.htm'
 creds: 'creds_web.json'
 # creds: "C:\\Users\\steve\\Documents\\creds_web.json"
