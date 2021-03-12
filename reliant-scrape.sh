@@ -1,5 +1,5 @@
 #!/bin/bash
 cd /home/ubuntu/Documents/reliant-scrape
 echo changed directory, running script...
-docker run stevenhurwitt/reliant-scrape:latest
+docker run stevenhurwitt/reliant-scrape:arm64
 echo finished, goodbye.
