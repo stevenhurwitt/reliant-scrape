@@ -320,12 +320,30 @@ def table_upload(df, db, table, creds):
     creds (dict) - database credentials
     """
 
+    connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    engine = create_engine(connect_str)
+    df.to_sql(table, con = engine, index = False, if_exists = 'append')
+    print('wrote df to sql table.')
+
+"""
+def table_upload(df, db, table, creds):
+    #""
+    uploads dataframe to db table
+
+    keyword arguments:
+    df (pandas df) - dataframe to push
+    db (str) - database name
+    table (str) - table name
+    creds (dict) - database credentials
+    #""
+
     ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
     connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
     #connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
+    """
 
 if __name__ == "__main__":
 
@@ -357,6 +375,9 @@ if __name__ == "__main__":
 
     data, date, var = get_daily_use(output)
     start_date = date
+
+    if data.shape[0] > 0:
+        stage = pd.concat([stage, data], axis = 0)
 
     try:
         var.find_element_by_id('nextid').click() #click to next day
@@ -414,7 +435,7 @@ if __name__ == "__main__":
 
     if (len(merge.index) > 0):
         print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.max(merge['Date']), merge.shape[0]))
-        table_upload(merge, 'raspberrypi', 'dbo.reliant_energy', db_creds)
+        table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
 
     else:
         print('failed to find recent data.')

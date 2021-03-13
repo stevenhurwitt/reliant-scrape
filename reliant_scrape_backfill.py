@@ -311,6 +311,9 @@ if __name__ == "__main__":
     data, date, var = get_daily_use(output)
     start_date = date
 
+    if data.shape[0] > 0:
+        stage = pd.concat([stage, data], axis = 0)
+
     try:
         var.find_element_by_id('previd').click() #click to prev day
         time.sleep(2)
