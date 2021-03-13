@@ -1,7 +1,5 @@
 #!/bin/bash
-cd /home/pi/Documents/reliant-scrape
-echo changed directory...
-source ./reliant/bin/activate
-echo activated environment, running script...
-python3 -m reliant_scrape
+cd /home/ubuntu/Documents/reliant-scrape
+echo changed directory, running script...
+docker run stevenhurwitt/reliant-scrape:arm64
 echo finished, goodbye.
