@@ -1,2 +1,0 @@
-﻿.create table reliantscrape (Date: datetime, Usage_kWh: real, Cost: real, Hi: int, Low: int) 
-reliantscrape.reliantscrape | take 1000;

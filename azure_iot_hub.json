@@ -1,5 +1,0 @@
-{ "device_id" : "raspberry-pi-8",
-"primary_key" : "byGmCurupvSx76WhiCYbpgr9Yob5RdNgLldAyCPb2mo=",
-"secondary_key" : "vuWTl+RN3cpho3DPjdmcD0rFuo7XjFsLEFSaKYngY3s=",
-"primary_conn_str" : "HostName=steven-iot-hub.azure-devices.net;DeviceId=raspberry-pi-8;SharedAccessKey=byGmCurupvSx76WhiCYbpgr9Yob5RdNgLldAyCPb2mo=",
-"secondary_conn_str" : "HostName=steven-iot-hub.azure-devices.net;DeviceId=raspberry-pi-8;SharedAccessKey=vuWTl+RN3cpho3DPjdmcD0rFuo7XjFsLEFSaKYngY3s="}

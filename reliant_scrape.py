@@ -298,7 +298,6 @@ def table_upload(df, db, table, creds):
     """
 
     connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
-<<<<<<< HEAD
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
@@ -318,8 +317,6 @@ def table_upload(df, db, table, creds):
     ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
     connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
     #connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
-=======
->>>>>>> 22226723f76009a608e786fbff07289c44f69025
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
