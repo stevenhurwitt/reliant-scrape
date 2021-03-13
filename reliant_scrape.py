@@ -37,8 +37,16 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
     opts.add_argument("--remote-debugging-port=9222")
+<<<<<<< HEAD
     #opts.binary_location = '/usr/bin/chromium-browser' #raspberry pi
     opts.binary_location = '/usr/bin/chromium' #docker
+=======
+<<<<<<< HEAD
+    #opts.binary_location = '/usr/bin/chromium-browser'
+=======
+    opts.binary_location = '/usr/bin/chromium'
+>>>>>>> f023c909399aadece916e7c192f399592e64c54e
+>>>>>>> 6f9487f43f8f3df92ac4552653c5d8380b025e10
     
     with open(creds, 'r') as f:
         creds = json.load(f)
@@ -73,7 +81,16 @@ def logon(headless, download_path, url, creds):
 
     opts.add_experimental_option("prefs", prefs)
 
+<<<<<<< HEAD
+    browser = Chrome(executable_path = 'chromedriver', options = opts)
+=======
     browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
+<<<<<<< HEAD
+=======
+
+    # browser = Chrome(executable_path = 'chromedriver', options = opts)
+>>>>>>> f023c909399aadece916e7c192f399592e64c54e
+>>>>>>> 6f9487f43f8f3df92ac4552653c5d8380b025e10
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
@@ -281,9 +298,32 @@ def table_upload(df, db, table, creds):
     """
 
     connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+<<<<<<< HEAD
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
+
+"""
+def table_upload(df, db, table, creds):
+    #""
+    uploads dataframe to db table
+
+    keyword arguments:
+    df (pandas df) - dataframe to push
+    db (str) - database name
+    table (str) - table name
+    creds (dict) - database credentials
+    #""
+
+    ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
+    connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    #connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+=======
+>>>>>>> 22226723f76009a608e786fbff07289c44f69025
+    engine = create_engine(connect_str)
+    df.to_sql(table, con = engine, index = False, if_exists = 'append')
+    print('wrote df to sql table.')
+    """
 
 if __name__ == "__main__":
 
@@ -315,6 +355,9 @@ if __name__ == "__main__":
 
     data, date, var = get_daily_use(output)
     start_date = date
+
+    if data.shape[0] > 0:
+        stage = pd.concat([stage, data], axis = 0)
 
     try:
         var.find_element_by_id('nextid').click() #click to next day

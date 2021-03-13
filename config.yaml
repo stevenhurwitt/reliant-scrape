@@ -1,4 +1,4 @@
-headless: true
+headless: false
 # download: '/root/reliant-scrape/data'
 # download: "C:\\Users\\steve\\Documents\\reliant-scrape\\data"
 # download: '/Users/stevenhurwitt/Documents/reliant-scrape/data'

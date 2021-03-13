@@ -1,19 +1,4 @@
-<<<<<<< HEAD
 {
-    "python.pythonPath": "C:\\Users\\Steven Hurwitt\\AppData\\Local\\Programs\\Python\\Python38\\python.exe"
-=======
-{
-<<<<<<< HEAD
-<<<<<<< HEAD
+    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python",
     "git.ignoreLimitWarning": true
-=======
-    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
->>>>>>> e5000ea47e6d216b9d478a9429a5e649db1148fc
-=======
-    "python.pythonPath": "/usr/bin/python3"
-=======
-    "python.pythonPath": "/home/steven/miniconda3/envs/reliant/bin/python"
->>>>>>> b975854f0ae24e0eebb9791cb3387c9f5ab1590e
->>>>>>> 81638c36b3b802ede538db2bea5f9ae80596fae5
->>>>>>> f023c909399aadece916e7c192f399592e64c54e
 }
