@@ -26,7 +26,7 @@ configobj==5.0.6
 constantly==15.1.0
 cryptography==2.8
 cycler==0.10.0
-dbus-python==1.2.16
+# dbus-python==1.2.16
 decorator==4.4.2
 defusedxml==0.6.0
 distro==1.4.0

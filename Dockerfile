@@ -28,6 +28,7 @@ RUN apt-get install -y libglib2.0-0 \
     libx11-xcb-dev \
     libx11-doc \
     libxcb-doc \
+    libgirepository1.0-dev \
     default-dbus-session-bus \
     chromium \
     chromium-driver \
