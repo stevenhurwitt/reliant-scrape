@@ -37,9 +37,9 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
     opts.add_argument("--remote-debugging-port=9222")
-    #opts.binary_location = '/usr/bin/chromium-browser' #raspberry pi
-    #opts.binary_location = '/snap/bin/chromium' #ubuntu desktop
-    opts.binary_location = '/usr/bin/chromium' #docker
+    opts.binary_location = '/usr/bin/chromium-browser' #raspberry pi
+    # opts.binary_location = '/snap/bin/chromium' #ubuntu desktop
+    # opts.binary_location = '/usr/bin/chromium' #docker
     
     with open(creds, 'r') as f:
         creds = json.load(f)
@@ -108,20 +108,23 @@ def acct_info(browser):
     acct (str) - user account number
     address (str) - user service address
     """
+    try:
+        due = browser.find_element_by_xpath("//div[@class='resp-col-12-sm resp-col-8 left contentComponent']")
+        welcome = browser.find_element_by_xpath("//div[@class='resp-col-5 resp-col-5-sm left colorWhite']")
 
-    due = browser.find_element_by_xpath("//div[@class='resp-col-12-sm resp-col-8 left contentComponent']")
-    welcome = browser.find_element_by_xpath("//div[@class='resp-col-5 resp-col-5-sm left colorWhite']")
+        dollars, cents = due.text.split('\n')[1].split('$')[1].split('.')
+        total = int(dollars) + int(cents)/100
 
-    dollars, cents = due.text.split('\n')[1].split('$')[1].split('.')
-    total = int(dollars) + int(cents)/100
+        name_acct = welcome.text.split('\n')[0]
+        address = welcome.text.split('\n')[1]
 
-    name_acct = welcome.text.split('\n')[0]
-    address = welcome.text.split('\n')[1]
+        name, acct = name_acct.split('(')
+        name = ' '.join(name.split(' ')[:2])
+        acct = acct.split(')')[0]
+        return(total, name, acct, address)
 
-    name, acct = name_acct.split('(')
-    name = ' '.join(name.split(' ')[:2])
-    acct = acct.split(')')[0]
-    return(total, name, acct, address)
+    except:
+        return(None)
 
 def table_to_df(browser):
     """parses acct page for usage data
@@ -361,10 +364,14 @@ if __name__ == "__main__":
     time.sleep(15)
 
     #scrape basic info
-    amt, name, acct, address = acct_info(output)
+    try:
+        amt, name, acct, address = acct_info(output)
 
-    print('current bill is ${}.'.format(amt))
-    print('service for {}, account {} at {}.'.format(name, acct, address))
+        print('current bill is ${}.'.format(amt))
+        print('service for {}, account {} at {}.'.format(name, acct, address))
+
+    except:
+        pass
 
     #select account option from menu
     want_to = output.find_element_by_xpath("//select[@id='wantTo']")
