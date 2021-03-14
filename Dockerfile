@@ -17,25 +17,25 @@ WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
 # chrome & chromedriver
-RUN apt-get install -y libglib2.0-0 \
-    libfontconfig1 \
-    libc6 \
-    libnspr4 \
-    libsqlite3-0 \
-    libnspr4 \
-    libgconf-2-4 \
-    libnss3-dev \
-    libx11-xcb-dev \
-    libx11-doc \
-    libxcb-doc \
-    default-dbus-session-bus \
-    chromium \
-    chromium-driver \
-    unixodbc-dev
+# RUN apt-get install -y libglib2.0-0 \
+#     libfontconfig1 \
+#     libc6 \
+#     libnspr4 \
+#     libsqlite3-0 \
+#     libnspr4 \
+#     libgconf-2-4 \
+#     libnss3-dev \
+#     libx11-xcb-dev \
+#     libx11-doc \
+#     libxcb-doc \
+#     default-dbus-session-bus \
+#     chromium \
+#     chromium-driver \
+#     unixodbc-dev
 
 # add chromedriver to path
-RUN export PATH=$PATH:/usr/bin/chromedriver
-RUN chmod +x /usr/bin/chromedriver
+# RUN export PATH=$PATH:/usr/bin/chromedriver
+# RUN chmod +x /usr/bin/chromedriver
 
 #install packages
 RUN pip3 install -r /root/reliant-scrape/requirements.txt
