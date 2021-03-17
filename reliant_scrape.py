@@ -37,8 +37,8 @@ def logon(headless, download_path, url, creds):
     opts.add_argument('--start-maximized')
     opts.add_argument('--disable-dev-shm-usage')
     opts.add_argument("--remote-debugging-port=9222")
-    #opts.binary_location = '/usr/bin/chromium-browser' #raspberry pi
-    #opts.binary_location = '/snap/bin/chromium' #ubuntu desktop
+    # opts.binary_location = '/usr/bin/chromium-browser' #raspberry pi
+    # opts.binary_location = '/snap/bin/chromium' #ubuntu desktop
     opts.binary_location = '/usr/bin/chromium' #docker
     
     with open(creds, 'r') as f:
@@ -75,6 +75,8 @@ def logon(headless, download_path, url, creds):
     opts.add_experimental_option("prefs", prefs)
 
     browser = Chrome(executable_path = '/usr/bin/chromedriver', options = opts)
+
+    # browser = Chrome(executable_path = 'chromedriver', options = opts)
     
     if download_path and headless:
         enable_download_headless(browser, download_path)
@@ -106,20 +108,23 @@ def acct_info(browser):
     acct (str) - user account number
     address (str) - user service address
     """
+    try:
+        due = browser.find_element_by_xpath("//div[@class='resp-col-12-sm resp-col-8 left contentComponent']")
+        welcome = browser.find_element_by_xpath("//div[@class='resp-col-5 resp-col-5-sm left colorWhite']")
 
-    due = browser.find_element_by_xpath("//div[@class='resp-col-12-sm resp-col-8 left contentComponent']")
-    welcome = browser.find_element_by_xpath("//div[@class='resp-col-5 resp-col-5-sm left colorWhite']")
+        dollars, cents = due.text.split('\n')[1].split('$')[1].split('.')
+        total = int(dollars) + int(cents)/100
 
-    dollars, cents = due.text.split('\n')[1].split('$')[1].split('.')
-    total = int(dollars) + int(cents)/100
+        name_acct = welcome.text.split('\n')[0]
+        address = welcome.text.split('\n')[1]
 
-    name_acct = welcome.text.split('\n')[0]
-    address = welcome.text.split('\n')[1]
+        name, acct = name_acct.split('(')
+        name = ' '.join(name.split(' ')[:2])
+        acct = acct.split(')')[0]
+        return(total, name, acct, address)
 
-    name, acct = name_acct.split('(')
-    name = ' '.join(name.split(' ')[:2])
-    acct = acct.split(')')[0]
-    return(total, name, acct, address)
+    except:
+        return(None)
 
 def table_to_df(browser):
     """parses acct page for usage data
@@ -321,8 +326,8 @@ def table_upload(df, db, table, creds):
     """
 
     ## to do: use sql server on raspberry pi: https://stackoverflow.com/questions/24085352/how-do-i-connect-to-sql-server-via-sqlalchemy-using-windows-authentication
-    connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
-    #connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    #connect_str = "mssql+pyodbc://{}:{}@{}/{}?driver=ODBC+Driver+17+for+SQL+Server".format(creds['User'], creds['Password'], creds['Endpoint'], db)
+    connect_str = 'mysql://{}:{}@{}/{}'.format(creds['User'], creds['Password'], creds['Endpoint'], db)
     engine = create_engine(connect_str)
     df.to_sql(table, con = engine, index = False, if_exists = 'append')
     print('wrote df to sql table.')
@@ -339,10 +344,14 @@ if __name__ == "__main__":
     time.sleep(15)
 
     #scrape basic info
-    amt, name, acct, address = acct_info(output)
+    try:
+        amt, name, acct, address = acct_info(output)
 
-    print('current bill is ${}.'.format(amt))
-    print('service for {}, account {} at {}.'.format(name, acct, address))
+        print('current bill is ${}.'.format(amt))
+        print('service for {}, account {} at {}.'.format(name, acct, address))
+
+    except:
+        pass
 
     #select account option from menu
     want_to = output.find_element_by_xpath("//select[@id='wantTo']")
@@ -357,6 +366,9 @@ if __name__ == "__main__":
 
     data, date, var = get_daily_use(output)
     start_date = date
+
+    if data.shape[0] > 0:
+        stage = pd.concat([stage, data], axis = 0)
 
     try:
         var.find_element_by_id('nextid').click() #click to next day
@@ -414,7 +426,7 @@ if __name__ == "__main__":
 
     if (len(merge.index) > 0):
         print('found new data with range of {} to {} with {} records'.format(np.min(merge['Date']), np.max(merge['Date']), merge.shape[0]))
-        table_upload(merge, 'raspberrypi', 'dbo.reliant_energy', db_creds)
+        table_upload(merge, 'reliant_energy_db', 'daily_use', db_creds)
 
     else:
         print('failed to find recent data.')
