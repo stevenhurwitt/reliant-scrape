@@ -16,7 +16,7 @@ RUN mkdir -p /root/reliant-scrape
 WORKDIR /root/reliant-scrape
 COPY . /root/reliant-scrape
 
-# chrome & chromedriver
+# Chrome & chromedriver
 RUN apt-get install -y libglib2.0-0 \
     libfontconfig1 \
     libc6 \
@@ -28,15 +28,17 @@ RUN apt-get install -y libglib2.0-0 \
     libx11-xcb-dev \
     libx11-doc \
     libxcb-doc \
+    libgirepository1.0-dev \
     default-dbus-session-bus \
     chromium \
-    chromium-driver
+    chromium-driver \
+    unixodbc-dev
 
-# add chromedriver to path
+# Add chromedriver to path
 RUN export PATH=$PATH:/usr/bin/chromedriver
 RUN chmod +x /usr/bin/chromedriver
 
-#install packages
+# Install packages
 RUN pip3 install -r /root/reliant-scrape/requirements.txt
 
 # The code to run when container is started:

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .DS_Store
 .DS_Store
 creds_web.json
@@ -8,3 +9,12 @@ steven-aws-t4gmicro.pem
 =======
 steven_kusto_creds.json
 >>>>>>> f023c909399aadece916e7c192f399592e64c54e
+=======
+.DS_Store
+.DS_Store
+creds_web.json
+creds_google.json
+db_creds.json
+steven-aws-t4gmicro.pem
+db_creds_new.json
+>>>>>>> 88b43f8ff01a6af40e97f987321cb78491761fa8

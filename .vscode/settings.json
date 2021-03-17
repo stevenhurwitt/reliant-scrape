@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {
 <<<<<<< HEAD
     "python.pythonPath": "C:\\Users\\steve\\.conda\\envs\\reliant-37\\python.exe"
@@ -13,4 +14,9 @@
 >>>>>>> b975854f0ae24e0eebb9791cb3387c9f5ab1590e
 >>>>>>> 81638c36b3b802ede538db2bea5f9ae80596fae5
 >>>>>>> f023c909399aadece916e7c192f399592e64c54e
+=======
+{
+    "python.pythonPath": "/usr/bin/python3",
+    "git.ignoreLimitWarning": true
+>>>>>>> 88b43f8ff01a6af40e97f987321cb78491761fa8
 }
