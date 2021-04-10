@@ -23,8 +23,4 @@ simple webscrape of daily usage data in python.
 
 ## automated docker runs
 
-copy `reliant_scrape.server` and `reliant_scrape.timer` to `/etc/systemd/system/`. this will execute: 
-
-```docker run --name reliant_scrape_container stevenhurwitt/reliant-scrape:latest stevenhurwitt/reliant-scrape``` 
-
-at 22:00 daily.
+you can configure a cron job to run the `reliant-scrape.sh` script every night at 10 pm (or whatever time you choose).
